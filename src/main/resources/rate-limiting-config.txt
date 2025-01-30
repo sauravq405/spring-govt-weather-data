@@ -1,0 +1,53 @@
+For pom.xml file:
+
+    	<dependencies>
+    		<dependency>
+    			<groupId>org.springframework.boot</groupId>
+    			<artifactId>spring-boot-starter-data-redis-reactive</artifactId>
+    		</dependency>
+    		<dependency>
+    			<groupId>org.springframework.cloud</groupId>
+    			<artifactId>spring-cloud-starter-gateway</artifactId>
+    		</dependency>
+	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>2022.0.0</version> <!-- Compatible version for Spring Boot 3.x -->
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+
+
+
+
+
+For application.properties file
+##########################RATE-LIMITING##########################
+
+# Assuming our service runs locally
+
+# Route Configuration
+spring.cloud.gateway.routes[0].id=weather_route
+spring.cloud.gateway.routes[0].uri=http://localhost:8090
+spring.cloud.gateway.routes[0].predicates[0]=Path=/api/**
+spring.cloud.gateway.routes[0].filters[0]=RequestRateLimiter
+spring.cloud.gateway.routes[0].filters[0].args.key-resolver=#{@userKeyResolver}
+
+# Hourly Rate Limit
+spring.cloud.gateway.routes[0].filters[0].args.redis-rate-limiter.replenishRate=100  # Allow 100 requests per minute (~6000 per hour)
+spring.cloud.gateway.routes[0].filters[0].args.redis-rate-limiter.burstCapacity=200  # Burst up to 200 requests
+
+# Daily Rate Limit
+spring.cloud.gateway.routes[0].filters[1]=RequestRateLimiter
+spring.cloud.gateway.routes[0].filters[1].args.key-resolver=#{@userKeyResolver}
+spring.cloud.gateway.routes[0].filters[1].args.redis-rate-limiter.replenishRate=5    # Allow 5 requests per minute (~7200 per day)
+spring.cloud.gateway.routes[0].filters[1].args.redis-rate-limiter.burstCapacity=10   # Burst up to 10 requests
+
+

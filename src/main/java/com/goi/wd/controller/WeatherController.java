@@ -2,12 +2,14 @@ package com.goi.wd.controller;
 
 
 import com.goi.wd.service.StationService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/api")
+@Slf4j
 public class WeatherController {
 
     @Autowired

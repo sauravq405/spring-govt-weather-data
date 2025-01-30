@@ -4,6 +4,7 @@ import com.goi.wd.dto.Station;
 import com.goi.wd.dto.StationDataResponse;
 import com.goi.wd.dto.WeatherDataResponse;
 import com.goi.wd.model.WeatherData;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
+@Slf4j
 public class StationService {
 
     private final WeatherScraperService weatherScraperService;
@@ -34,8 +36,14 @@ public class StationService {
     }
 
     // Method to get a station by its ID
-    public StationDataResponse getStationById(int id) throws IOException {
-        List<Station> stations = (List<Station>) getAllStations().getResult();
+    public StationDataResponse getStationById(int id)  {
+        List<Station> stations = null;
+        try {
+            stations = (List<Station>) getAllStations().getResult();
+        } catch (IOException e) {
+            log.error("Error caught",e);
+            throw new RuntimeException(e);
+        }
         for (Station station : stations) {
             if (station.getStationId() == id) {
                 return new StationDataResponse(200, station);

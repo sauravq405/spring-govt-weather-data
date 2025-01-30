@@ -1,0 +1,11 @@
+command to directly save the SSL certificate of a URL using OpenSSL from the command line:
+
+echo | openssl s_client -connect city.imd.gov.in:443 -servername city.imd.gov.in | openssl x509 -outform PEM > exported_certificate.cer
+
+After saving the certificate, you can then use this file with the keytool command to import it into your keystore:
+
+keytool -import -alias imdweather -keystore mytruststore.jks -file exported_certificate.cer
+
+root123
+
+java -Djavax.net.ssl.trustStore=mytruststore.jks -Djavax.net.ssl.trustStorePassword=yourChosenPassword -cp .:/path/to/another/directory:/path/to/library.jar com.example.MainClass1
